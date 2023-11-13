@@ -1,12 +1,9 @@
-.rectangle {
-	width: 200px;
-	height: 100px;
-	margin: 20px;
+.btn {
+	@apply font-bold py-2 px-4 rounded;
 }
-
-.circle {
-	width: 100px;
-	height: 100px;
-	border-radius: 50%;
-	margin: 20px;
+.btn-blue {
+	@apply bg-blue-500 text-white;
+}
+.btn-blue:hover {
+	@apply bg-blue-700;
 }

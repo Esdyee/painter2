@@ -1,7 +1,9 @@
 import React from 'react';
+import './Shape.css';
 
 // 도형의 타입과 위치, 크기에 대한 인터페이스 정의
 interface ShapeProps {
+	key: number;
 	type: 'rectangle' | 'circle'; // 예시로 'rectangle'과 'circle'을 사용
 	position: {
 		x: number;
