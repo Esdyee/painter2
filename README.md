@@ -1,46 +1,37 @@
-# Getting Started with Create React App
+디테일한 개발 히스토리는 아래 링크에 정리되어 있음
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+https://boardmix.com/app/editor/CN0CiEi1RPLM6q6VGGLUpg?inviteCode=oKuc6p
 
-## Available Scripts
+<br/>
 
-In the project directory, you can run:
+아래 7개 항목 중 6개 개발 완료.
 
-### `npm start`
+6번은 시간관계상 패스하기로 하였음.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+테스트 코드 작성 또한 패스하였음.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+<br/>
+<br/>
 
-### `npm test`
+[v] ​**필수**​​ 마우스를 드래그해서 사각형을 그릴 수 있습니다.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+[v] ​**필수**​​ 마우스를 드래그해서 원을 그릴 수 있습니다.
 
-### `npm run build`
+[v] 도형을 선택해서 삭제할 수 있습니다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+[v] ​**필수**​​ 모든 도형을 일괄 삭제할 수 있습니다.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+[v] 도형을 선택해서 드래그로 위치를 이동할 수 있습니다.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+[  ] 도형을 선택해서 표시 순서를 바꿀 수 있습니다. (e.g. 맨 앞으로 가져오기, 맨 뒤로 보내기)
 
-### `npm run eject`
+[v]​**필수**​​ 그려진 도형은 Client-side storage에 저장되어 페이지를 새로고침 해도 유지되어야 합니다.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+<br/>
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+개인적으로 사용한 라이브러리는
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+비교적 간단하게 버튼 레이아웃 및 캔버스 대용 사각형 레이아웃을 잡기위해 tailwind css 사용하였음.
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+그 외에는 별도로 사용한 라이브러리 없음.
