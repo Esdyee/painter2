@@ -10,34 +10,58 @@ interface ShapeData {
 }
 
 function DrawingBoard() {
-	// 상태 관리 및 이벤트 핸들러 구현
-	// eslint-disable-next-line react-hooks/rules-of-hooks
 	const [shapes, setShapes] = useState<ShapeData[]>([]);
 	const [selectedType, setSelectedType] = useState<'rectangle' | 'circle'>("rectangle");
+	const [isDrawing, setIsDrawing] = useState(false);
+	const [startPosition, setStartPosition] = useState<{ x: number; y: number } | null>(null);
+	const [currentShape, setCurrentShape] = useState<ShapeData | null>(null);
 
-	const clickAddShape = (e: React.MouseEvent<HTMLDivElement>) => {
-		console.log("clickAddShape");
-		// 만들어진 도형을 drawing-board에 추가
+	const updateCurrentShape = (clientX: number, clientY: number) => {
+		if (!startPosition) return;
+
 		const newShape: ShapeData = {
-			id: shapes.length, // 간단한 예시로 id 설정
-			type: selectedType, // 또는 'circle', 사용자 입력에 따라 결정 가능
-			position: { x: e.clientX, y: e.clientY },
-			size: { width: 100, height: 100 } // 고정 크기, 또는 사용자 정의 가능
+			id: -1, // 임시 ID
+			type: selectedType,
+			position: {
+				x: Math.min(clientX, startPosition.x),
+				y: Math.min(clientY, startPosition.y)
+			},
+			size: {
+				width: Math.abs(clientX - startPosition.x),
+				height: Math.abs(clientY - startPosition.y)
+			}
 		};
-		setShapes([...shapes, newShape]);
+
+		setCurrentShape(newShape);
+	};
+
+	const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+		setStartPosition({ x: e.clientX, y: e.clientY });
+		setIsDrawing(true);
+	};
+
+	const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+		if (!isDrawing) return;
+		updateCurrentShape(e.clientX, e.clientY);
+	};
+
+	const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
+		if (!isDrawing || !startPosition) return;
+		if (currentShape === null) return;
+
+		setShapes([...shapes, currentShape as ShapeData]);
+		setIsDrawing(false);
+		setStartPosition(null);
+		setCurrentShape(null);
 	};
 
 	return (
 		<div className="drawing-board">
-			<button className={"btn btn-blue"} onClick={() => {
-				setSelectedType("rectangle");
-			}}>Rectangle</button>
-			<button className={"btn btn-blue ms-2"} onClick={() => {
-				setSelectedType("circle");
-			}}>Circle</button>
+			<button className={"btn btn-blue"} onClick={() => setSelectedType("rectangle")}>Rectangle</button>
+			<button className={"btn btn-blue ms-2"} onClick={() => setSelectedType("circle")}>Circle</button>
 
-			<div className={"border-2"} onClick={clickAddShape}
-			style={{ minHeight: "70vh"}} >
+			<div className={"border-2"} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
+			     style={{ minHeight: "70vh" }}>
 				{shapes.map(shape => (
 					<Shape
 						key={shape.id}
@@ -46,9 +70,16 @@ function DrawingBoard() {
 						size={shape.size}
 					/>
 				))}
-			</div>
+				{currentShape ? (
+					<Shape
+						key={currentShape.id}
+						type={currentShape.type}
+						position={currentShape.position}
+						size={currentShape.size}
+					/>
+				) : <div></div>}
 
-			{/* 도형을 렌더링하는 로직 */}
+			</div>
 		</div>
 	);
 }

@@ -15,7 +15,12 @@ interface ShapeProps {
 	};
 }
 
-const Shape: React.FC<ShapeProps> = ({ type, position, size }) => {
+const Shape: React.FC<ShapeProps> = (
+	{
+		type,
+		position,
+		size
+	}) => {
 	// 도형 렌더링 로직
 
 	// 스타일 계산
@@ -28,9 +33,8 @@ const Shape: React.FC<ShapeProps> = ({ type, position, size }) => {
 	};
 
 	return (
-		<div className={`shape ${type}`} style={style}>
+		<div className={`shape ${type}`} style={{position: "absolute", ...style}}>
 			{/* 도형 내용 */}
-			도형
 		</div>
 	);
 };
