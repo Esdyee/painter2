@@ -31,6 +31,7 @@ function DrawingBoard() {
 		}
 	}, []);
 
+	// 초기 도형 생성
 	const updateCurrentShape = (clientX: number, clientY: number) => {
 		if (!startPosition) return;
 
@@ -53,6 +54,7 @@ function DrawingBoard() {
 		setCurrentShape(newShape);
 	};
 
+	// 마우스 다운 이벤트
 	const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
 
 		if (selectedShape !== null) {
@@ -68,6 +70,7 @@ function DrawingBoard() {
 
 	};
 
+	// 마우스 무브 이벤트(드래그)
 	const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
 		if (isDragging && selectedShape !== null && dragOffset) {
 			const newShapes = shapes.map(shape => {
@@ -89,6 +92,8 @@ function DrawingBoard() {
 
 	};
 
+	// 마우스 업 이벤트
+	// localStorage에 저장
 	const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
 		if (isDrawing && startPosition && currentShape) {
 			setShapes([...shapes, currentShape]);
@@ -106,20 +111,13 @@ function DrawingBoard() {
 		setSelectedShape(key);
 	};
 
-	// const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
-	// 	e.stopPropagation();
-	// 	if (selectedShape === null) {
-	// 		return;
-	// 	}
-	// 	setIsDragging(true);
-	// 	setDragOffset({ x: e.clientX - shapes[selectedShape].position.x, y: e.clientY - shapes[selectedShape].position.y });
-	// };
-
+	// 도형 전체 삭제
 	function shapeAllClear() {
 		setShapes([]);
 		localStorage.removeItem("shapes");
 	}
 
+	// 도형 삭제
 	function shapeRemove() {
 		if (selectedShape === null) {
 			return;
