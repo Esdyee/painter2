@@ -19,6 +19,10 @@ function DrawingBoard() {
 	// 선택된 도형
 	const [selectedShape, setSelectedShape] = useState<number | null>(null);
 
+	// 드래그
+	const [isDragging, setIsDragging] = useState(false);
+	const [dragOffset, setDragOffset] = useState<{ x: number; y: number } | null>(null);
+
 	useEffect(() => {
 		const shapesJson = localStorage.getItem("shapes");
 		if (shapesJson) {
@@ -50,37 +54,66 @@ function DrawingBoard() {
 	};
 
 	const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-		console.log("handleMouseDown")
-		setStartPosition({ x: e.clientX, y: e.clientY });
-		setIsDrawing(true);
+
+		if (selectedShape !== null) {
+			e.stopPropagation();
+			setIsDragging(true);
+			const shape = shapes.find(shape => shape.key === selectedShape);
+			if (!shape) return;
+			setDragOffset({ x: e.clientX - shape.position.x, y: e.clientY - shape.position.y });
+		} else {
+			setStartPosition({ x: e.clientX, y: e.clientY });
+			setIsDrawing(true);
+		}
+
 	};
 
 	const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-		if (!isDrawing) return;
-		updateCurrentShape(e.clientX, e.clientY);
+		if (isDragging && selectedShape !== null && dragOffset) {
+			const newShapes = shapes.map(shape => {
+				if (shape.key === selectedShape) {
+					return {
+						...shape,
+						position: {
+							x: e.clientX - dragOffset.x,
+							y: e.clientY - dragOffset.y
+						}
+					};
+				}
+				return shape;
+			});
+			setShapes(newShapes);
+		} else if (isDrawing) {
+			updateCurrentShape(e.clientX, e.clientY);
+		}
+
 	};
 
 	const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-		if (!isDrawing || !startPosition) return;
-		if (currentShape === null) {
-			setIsDrawing(false);
-			return;
+		if (isDrawing && startPosition && currentShape) {
+			setShapes([...shapes, currentShape]);
+			setCurrentShape(null);
+			const shapesJson = JSON.stringify([...shapes, currentShape]);
+			localStorage.setItem("shapes", shapesJson);
 		}
-
-		setShapes([...shapes, currentShape as ShapeData]);
 		setIsDrawing(false);
+		setIsDragging(false);
 		setStartPosition(null);
-		setCurrentShape(null);
-
-		// local storage에 저장
-		const shapesJson = JSON.stringify([...shapes, currentShape as ShapeData]);
-		localStorage.setItem("shapes", shapesJson);
 	};
 
 	const handleShapeClick = (key: number) => {
 		console.log("handleShapeClick", key);
 		setSelectedShape(key);
 	};
+
+	// const handleDragStart = (e: React.MouseEvent<HTMLDivElement>) => {
+	// 	e.stopPropagation();
+	// 	if (selectedShape === null) {
+	// 		return;
+	// 	}
+	// 	setIsDragging(true);
+	// 	setDragOffset({ x: e.clientX - shapes[selectedShape].position.x, y: e.clientY - shapes[selectedShape].position.y });
+	// };
 
 	function shapeAllClear() {
 		setShapes([]);
@@ -106,6 +139,7 @@ function DrawingBoard() {
 
 			<pre>
 				{JSON.stringify(selectedShape, null, 2)}
+				{/*{shapes[selectedShape]}*/}
 			</pre>
 			<div className={"border-2"} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
 			     style={{ minHeight: "70vh" }}>
