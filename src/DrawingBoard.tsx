@@ -47,7 +47,10 @@ function DrawingBoard() {
 
 	const handleMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
 		if (!isDrawing || !startPosition) return;
-		if (currentShape === null) return;
+		if (currentShape === null) {
+			setIsDrawing(false);
+			return;
+		}
 
 		setShapes([...shapes, currentShape as ShapeData]);
 		setIsDrawing(false);
