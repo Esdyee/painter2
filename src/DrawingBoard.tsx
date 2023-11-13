@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Shape from './Shape';
 import './DrawingBoard.css';
 
@@ -16,11 +16,25 @@ function DrawingBoard() {
 	const [startPosition, setStartPosition] = useState<{ x: number; y: number } | null>(null);
 	const [currentShape, setCurrentShape] = useState<ShapeData | null>(null);
 
+	useEffect(() => {
+		const shapesJson = localStorage.getItem("shapes");
+		if (shapesJson) {
+			const shapes = JSON.parse(shapesJson);
+			setShapes(shapes);
+		}
+	}, []);
+
+	// 선택된 도형
+	const [selectedShape, setSelectedShape] = useState<ShapeData | null>(null);
+
 	const updateCurrentShape = (clientX: number, clientY: number) => {
 		if (!startPosition) return;
 
+		//랜덤 ID 생성
+		const id = Math.floor(Math.random() * 10000000);
+
 		const newShape: ShapeData = {
-			id: -1, // 임시 ID
+			id: id, // 임시 ID
 			type: selectedType,
 			position: {
 				x: Math.min(clientX, startPosition.x),
@@ -56,10 +70,24 @@ function DrawingBoard() {
 		setIsDrawing(false);
 		setStartPosition(null);
 		setCurrentShape(null);
+
+		// local storage에 저장
+		const shapesJson = JSON.stringify([...shapes, currentShape as ShapeData]);
+		localStorage.setItem("shapes", shapesJson);
 	};
 
 	function shapeAllClear() {
 		setShapes([]);
+		localStorage.removeItem("shapes");
+	}
+
+	function clickSelecteShape() {
+		console.log("selectedShape")
+		if (selectedShape === null) {
+			setSelectedShape(currentShape);
+		} else {
+			setSelectedShape(null);
+		}
 	}
 
 	return (
@@ -67,11 +95,13 @@ function DrawingBoard() {
 			<button className={"btn btn-blue"} onClick={() => setSelectedType("rectangle")}>Rectangle</button>
 			<button className={"btn btn-blue ms-2"} onClick={() => setSelectedType("circle")}>Circle</button>
 			<button className={"btn btn-blue ms-2"} onClick={() => shapeAllClear()}>Clear</button>
-
+			<pre>
+				{JSON.stringify(selectedShape, null, 2)}
+			</pre>
 			<div className={"border-2"} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
 			     style={{ minHeight: "70vh" }}>
 				{shapes.map(shape => (
-					<Shape
+					<Shape onClick={() => clickSelecteShape()}
 						key={shape.id}
 						type={shape.type}
 						position={shape.position}
@@ -79,7 +109,7 @@ function DrawingBoard() {
 					/>
 				))}
 				{currentShape ? (
-					<Shape
+					<Shape onClick={() => {}}
 						key={currentShape.id}
 						type={currentShape.type}
 						position={currentShape.position}
