@@ -58,10 +58,15 @@ function DrawingBoard() {
 		setCurrentShape(null);
 	};
 
+	function shapeAllClear() {
+		setShapes([]);
+	}
+
 	return (
 		<div className="drawing-board">
 			<button className={"btn btn-blue"} onClick={() => setSelectedType("rectangle")}>Rectangle</button>
 			<button className={"btn btn-blue ms-2"} onClick={() => setSelectedType("circle")}>Circle</button>
+			<button className={"btn btn-blue ms-2"} onClick={() => shapeAllClear()}>Clear</button>
 
 			<div className={"border-2"} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
 			     style={{ minHeight: "70vh" }}>
