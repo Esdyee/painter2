@@ -4,7 +4,6 @@ import './Shape.css';
 // 도형의 타입과 위치, 크기에 대한 인터페이스 정의
 interface ShapeProps {
 	key: number;
-	onClick: () => void;
 	type: 'rectangle' | 'circle'; // 예시로 'rectangle'과 'circle'을 사용
 	position: {
 		x: number;
@@ -14,13 +13,16 @@ interface ShapeProps {
 		width: number;
 		height: number;
 	};
+	onClick: (key: number) => void;
 }
 
 const Shape: React.FC<ShapeProps> = (
 	{
+		key,
 		type,
 		position,
-		size
+		size,
+		onClick
 	}) => {
 	// 도형 렌더링 로직
 
@@ -33,8 +35,16 @@ const Shape: React.FC<ShapeProps> = (
 		// 추가적인 스타일링이 필요할 수 있음
 	};
 
+	const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+		event.stopPropagation(); // 이벤트 전파 중단
+		console.log("handleClick", key);
+		onClick(key);
+	};
+
 	return (
-		<div className={`shape ${type}`} style={{position: "absolute", ...style}}>
+		<div className={`shape ${type}`}
+		     onClick={handleClick}
+		     style={{ position: "absolute", ...style}}>
 			{/* 도형 내용 */}
 		</div>
 	);

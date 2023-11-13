@@ -3,7 +3,7 @@ import Shape from './Shape';
 import './DrawingBoard.css';
 
 interface ShapeData {
-	id: number;
+	key: number;
 	type: 'rectangle' | 'circle';
 	position: { x: number; y: number };
 	size: { width: number; height: number };
@@ -16,6 +16,9 @@ function DrawingBoard() {
 	const [startPosition, setStartPosition] = useState<{ x: number; y: number } | null>(null);
 	const [currentShape, setCurrentShape] = useState<ShapeData | null>(null);
 
+	// 선택된 도형
+	const [selectedShape, setSelectedShape] = useState<number | null>(null);
+
 	useEffect(() => {
 		const shapesJson = localStorage.getItem("shapes");
 		if (shapesJson) {
@@ -24,9 +27,6 @@ function DrawingBoard() {
 		}
 	}, []);
 
-	// 선택된 도형
-	const [selectedShape, setSelectedShape] = useState<ShapeData | null>(null);
-
 	const updateCurrentShape = (clientX: number, clientY: number) => {
 		if (!startPosition) return;
 
@@ -34,7 +34,7 @@ function DrawingBoard() {
 		const id = Math.floor(Math.random() * 10000000);
 
 		const newShape: ShapeData = {
-			id: id, // 임시 ID
+			key: id, // 임시 ID
 			type: selectedType,
 			position: {
 				x: Math.min(clientX, startPosition.x),
@@ -50,6 +50,7 @@ function DrawingBoard() {
 	};
 
 	const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+		console.log("handleMouseDown")
 		setStartPosition({ x: e.clientX, y: e.clientY });
 		setIsDrawing(true);
 	};
@@ -76,18 +77,24 @@ function DrawingBoard() {
 		localStorage.setItem("shapes", shapesJson);
 	};
 
+	const handleShapeClick = (key: number) => {
+		console.log("handleShapeClick", key);
+		setSelectedShape(key);
+	};
+
 	function shapeAllClear() {
 		setShapes([]);
 		localStorage.removeItem("shapes");
 	}
 
-	function clickSelecteShape() {
-		console.log("selectedShape")
+	function shapeRemove() {
 		if (selectedShape === null) {
-			setSelectedShape(currentShape);
-		} else {
-			setSelectedShape(null);
+			return;
 		}
+		const newShapes = shapes.filter(shape => shape.key !== selectedShape);
+		setShapes(newShapes);
+		setSelectedShape(null);
+		localStorage.setItem("shapes", JSON.stringify(newShapes));
 	}
 
 	return (
@@ -95,22 +102,28 @@ function DrawingBoard() {
 			<button className={"btn btn-blue"} onClick={() => setSelectedType("rectangle")}>Rectangle</button>
 			<button className={"btn btn-blue ms-2"} onClick={() => setSelectedType("circle")}>Circle</button>
 			<button className={"btn btn-blue ms-2"} onClick={() => shapeAllClear()}>Clear</button>
+			<button className={"btn btn-blue ms-2"} onClick={() => shapeRemove()}>Remove</button>
+
 			<pre>
 				{JSON.stringify(selectedShape, null, 2)}
 			</pre>
 			<div className={"border-2"} onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}
 			     style={{ minHeight: "70vh" }}>
 				{shapes.map(shape => (
-					<Shape onClick={() => clickSelecteShape()}
-						key={shape.id}
+					<Shape
+						onClick={() => {
+							handleShapeClick(shape.key);
+						}}
+						key={shape.key}
 						type={shape.type}
 						position={shape.position}
 						size={shape.size}
 					/>
 				))}
 				{currentShape ? (
-					<Shape onClick={() => {}}
-						key={currentShape.id}
+					<Shape
+						onClick={handleShapeClick}
+						key={currentShape.key}
 						type={currentShape.type}
 						position={currentShape.position}
 						size={currentShape.size}
